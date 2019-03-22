@@ -1,5 +1,5 @@
 import {
-  gql
+  gql,
 } from 'apollo-server-express';
 
 export default gql `
@@ -16,11 +16,12 @@ export default gql `
     messages: [Message!]
   }
 
-  type Token{
+  type Token {
     token: String!
   }
 
   extend type Mutation {
     signUp(username: String!, email: String!, password: String!): Token!
+    signIn(login: String!, password: String!): Token!
   }
 `;

@@ -33,10 +33,6 @@ const user = (sequelize, DataTypes) => {
     user.password = await user.generatePasswordHash();
   });
 
-  User.prototype.generatePasswordHash = async function () {
-    const saltRounds = 10;
-    return await bcrypt.hash(this.password, saltRounds);
-  };
 
   User.associate = models => {
     User.hasMany(models.Message, {
@@ -58,6 +54,15 @@ const user = (sequelize, DataTypes) => {
       });
     }
     return user;
+  };
+
+  User.prototype.generatePasswordHash = async function () {
+    const saltRounds = 10;
+    return await bcrypt.hash(this.password, saltRounds);
+  };
+
+  User.prototype.validatePassword = async function (password) {
+    return await bcrypt.compare(password, this.password);
   };
 
   return User;
