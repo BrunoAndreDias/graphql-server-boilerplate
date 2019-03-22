@@ -16,23 +16,25 @@ const user = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notEmpty: true,
-        isEmail: true,
-      },
+        isEmail: true
+      }
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true,
-        len: [7, 42],
-      },
+        len: [7, 42]
+      }
     },
+    role: {
+      type: DataTypes.STRING
+    }
   });
 
   User.beforeCreate(async user => {
     user.password = await user.generatePasswordHash();
   });
-
 
   User.associate = models => {
     User.hasMany(models.Message, {
@@ -56,12 +58,12 @@ const user = (sequelize, DataTypes) => {
     return user;
   };
 
-  User.prototype.generatePasswordHash = async function () {
+  User.prototype.generatePasswordHash = async function() {
     const saltRounds = 10;
     return await bcrypt.hash(this.password, saltRounds);
   };
 
-  User.prototype.validatePassword = async function (password) {
+  User.prototype.validatePassword = async function(password) {
     return await bcrypt.compare(password, this.password);
   };
 
