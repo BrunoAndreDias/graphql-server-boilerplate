@@ -1,11 +1,15 @@
 import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
-import { ApolloServer } from 'apollo-server-express';
+import {
+  ApolloServer
+} from 'apollo-server-express';
 
 import schema from './schema';
 import resolvers from './resolvers';
-import models, { sequelize } from './models';
+import models, {
+  sequelize
+} from './models';
 
 const app = express();
 
@@ -26,36 +30,41 @@ const server = new ApolloServer({
   },
   context: async () => ({
     models,
-    me: await models.User.findByLogin('bruno')
+    me: await models.User.findByLogin('bruno'),
+    secret: process.env.SECRET,
   })
 });
 
-server.applyMiddleware({ app, path: '/graphql' });
+server.applyMiddleware({
+  app,
+  path: '/graphql'
+});
 
 const eraseDatabaseOnSync = true;
 
-sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
+sequelize.sync({
+  force: eraseDatabaseOnSync
+}).then(async () => {
   if (eraseDatabaseOnSync) {
     createUsersWithMessages();
   }
 
-  app.listen({ port: 8000 }, () => {
+  app.listen({
+    port: 8000
+  }, () => {
     console.log('Apollo Server on http://localhost:8000/graphql');
   });
 });
 
 const createUsersWithMessages = async () => {
-  await models.User.create(
-    {
-      username: 'bruno',
-      messages: [
-        {
-          text: 'Learning apollo'
-        }
-      ]
-    },
-    {
-      include: [models.Message]
-    }
-  );
+  await models.User.create({
+    username: 'bruno',
+    email: 'test@a.com',
+    password: '123456789',
+    messages: [{
+      text: 'Learning apollo'
+    }]
+  }, {
+    include: [models.Message]
+  });
 };
